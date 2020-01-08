@@ -69,9 +69,6 @@ import UploadFile from "./UploadFile.vue";
   }
 })
 export default class CrudComponent extends Vue {
-  handleAvatarSuccess(res, file, c) {
-    global.console.log(res, file, c, "handleAvatarSuccess");
-  }
   // Property 'requestUrl' has no initializer and is not definitely assigned in the constructor.
   // 使用!:
   // 请求url
