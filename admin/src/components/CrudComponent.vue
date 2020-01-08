@@ -20,7 +20,8 @@
     <el-table @sort-change="sortChange" size="small" :data="data" stripe border style="width: 100%">
       <template v-for="(item,i) in fields">
         <el-table-column :sortable="item.sortable" :prop="item.prop"
-                         :label="item.label" :key="i" :formatter="item.dicData?formatter:null">
+                         :label="item.label" :key="i"
+                         :formatter="item.dicData?formatter:item.formatter?item.formatter:null">
         </el-table-column>
       </template>
       <el-table-column label="操作">

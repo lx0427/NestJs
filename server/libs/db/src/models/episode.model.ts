@@ -1,5 +1,11 @@
-import { prop, Ref } from '@typegoose/typegoose';
+import { prop, Ref, modelOptions } from '@typegoose/typegoose';
 import { Course } from './course.model';
+
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+  },
+})
 export class Episode {
   @prop()
   title: string;
