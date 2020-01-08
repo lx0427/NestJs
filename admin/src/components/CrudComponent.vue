@@ -1,8 +1,9 @@
 <template>
   <div>
-    <!-- <el-form :inline="true" class="demo-form-inline" :model="searchForm" label-width="80px">
+    <el-form v-if="canSearch" :inline="true" size="medium" class="demo-form-inline" :model="searchForm"
+             label-width="80px">
       <template v-for="(item,i) in fields">
-        <el-form-item v-if="item.isQuery" :key="i" :label="item.label">
+        <el-form-item v-if="item.isSearch" :key="i" :label="item.label">
           <el-select v-if="item.dicData" v-model="searchForm[item.prop]" placeholder="请选择">
             <el-option v-for="item in item.dicData" :key="item.value" :label="item.label"
                        :value="item.value">
@@ -12,9 +13,9 @@
         </el-form-item>
       </template>
       <el-form-item>
-        <el-button type="primary" @click="search">查询</el-button>
+        <el-button size="medium" type="primary" @click="search">查询</el-button>
       </el-form-item>
-    </el-form> -->
+    </el-form>
     <el-button style="margin-bottom:10px" type="primary" size="small" @click="addClick">新增</el-button>
     <el-table @sort-change="sortChange" size="small" :data="data" stripe border style="width: 100%">
       <template v-for="(item,i) in fields">
@@ -39,7 +40,7 @@
                    :total="pageOption.total">
     </el-pagination>
 
-    <el-dialog :title="title" :visible.sync="dialogFormVisible">
+    <el-dialog :title="title" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
       <el-form :model="form" label-width="80px">
         <template v-for="(item,i) in fields">
           <el-form-item v-if="editId&&item.isEdit || (!editId&&item.formslot)" :key="i" :label="item.label">
@@ -91,7 +92,9 @@ export default class CrudComponent extends Vue {
   // 弹框显示隐藏
   dialogFormVisible = false;
   form: any = {};
+  // 查询表格
   searchForm: any = {};
+  canSearch = false;
   data = [];
   editId = ""; // 编辑数据id
   formatter(row, column) {
@@ -142,20 +145,20 @@ export default class CrudComponent extends Vue {
     this.query.page = page;
     this.fetch();
   }
-  // search() {
-  //   let params = {};
-  //   for (const key in this.searchForm) {
-  //     let val = this.searchForm[key];
-  //     if (val) {
-  //       params[key] = this.fields.find(v => v.prop === key && v.regex)
-  //         ? { $regex: val }
-  //         : val;
-  //     }
-  //   }
-  //   this.query.where = params;
-  //   this.fetch();
-  //   // global.console.log(this.searchForm);
-  // }
+  search() {
+    let params = {};
+    for (const key in this.searchForm) {
+      let val = this.searchForm[key];
+      if (val) {
+        params[key] = this.fields.find(v => v.prop === key && v.regex)
+          ? { $regex: val }
+          : val;
+      }
+    }
+    global.console.log(params);
+    this.query.where = params;
+    this.fetch();
+  }
   async fetch() {
     let res = await this.$http.get(`${this.requestUrl}`, {
       params: {
@@ -191,11 +194,13 @@ export default class CrudComponent extends Vue {
     }
   }
   created() {
-    // this.fields.forEach(v => {
-    //   if (v.isQuery) {
-    //     this.$set(this.searchForm, v.prop, "");
-    //   }
-    // });
+    this.fields.forEach(v => {
+      if (v.isSearch) {
+        !this.canSearch && (this.canSearch = true);
+        this.$set(this.searchForm, v.prop, "");
+      }
+    });
+    global.console.log(this.searchForm);
     this.fetch();
   }
 }

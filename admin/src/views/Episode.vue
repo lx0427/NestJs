@@ -28,9 +28,10 @@ export default class Episode extends Vue {
         sortable: true,
         prop: "title",
         label: "课时名称",
-        formslot: true,
-        isEdit: true,
-        isQuery: true
+        formslot: true, // 是否为新增字段
+        isEdit: true, // 是否编辑
+        isSearch: true, // 字段是否用于搜索
+        regex: true // 是否使用模糊搜索
       },
       { prop: "file", label: "课时文件", formslot: true, isEdit: true },
       {
@@ -39,7 +40,7 @@ export default class Episode extends Vue {
         formslot: true,
         isEdit: true,
         dicData: this.dicData,
-        isQuery: true
+        isSearch: true
       }
     ];
     // global.console.log(this.dicData);
