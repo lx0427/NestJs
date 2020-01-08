@@ -9,6 +9,7 @@ Vue.config.productionTip = false
 Vue.prototype.$http = axios.create({
   baseURL: process.env.VUE_APP_API_URL
 })
+Vue.prototype.baseURL = process.env.VUE_APP_API_URL
 Vue.use(Crud)
 
 new Vue({

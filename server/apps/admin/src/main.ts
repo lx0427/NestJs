@@ -1,11 +1,17 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // 指定是基于express的泛型
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors();
+  // 静态文件托管
+  app.useStaticAssets('uploads', {
+    prefix: '/uploads',
+  });
 
   const options = new DocumentBuilder()
     .setTitle('Cats example')

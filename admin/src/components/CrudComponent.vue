@@ -4,12 +4,11 @@
              label-width="80px">
       <template v-for="(item,i) in fields">
         <el-form-item v-if="item.isSearch" :key="i" :label="item.label">
-          <el-select v-if="item.dicData" v-model="searchForm[item.prop]" placeholder="请选择">
-            <el-option v-for="item in item.dicData" :key="item.value" :label="item.label"
-                       :value="item.value">
+          <el-select v-if="item.dicData" clearable v-model="searchForm[item.prop]" placeholder="请选择">
+            <el-option v-for="item in item.dicData" :key="item.value" :label="item.label" :value="item.value">
             </el-option>
           </el-select>
-          <el-input v-else v-model="searchForm[item.prop]" autocomplete="off"></el-input>
+          <el-input v-else clearable v-model="searchForm[item.prop]" autocomplete="off"></el-input>
         </el-form-item>
       </template>
       <el-form-item>
@@ -19,9 +18,13 @@
     <el-button style="margin-bottom:10px" type="primary" size="small" @click="addClick">新增</el-button>
     <el-table @sort-change="sortChange" size="small" :data="data" stripe border style="width: 100%">
       <template v-for="(item,i) in fields">
-        <el-table-column :sortable="item.sortable" :prop="item.prop"
-                         :label="item.label" :key="i"
+        <el-table-column v-if="!item.upload" :sortable="item.sortable" :prop="item.prop" :label="item.label" :key="i"
                          :formatter="item.dicData?formatter:item.formatter?item.formatter:null">
+        </el-table-column>
+        <el-table-column v-else :prop="item.prop" :label="item.label" :key="i">
+          <template slot-scope="{row}">
+            <img :src="row[item.prop]" style="width:100px" alt="">
+          </template>
         </el-table-column>
       </template>
       <el-table-column label="操作">
@@ -31,23 +34,18 @@
         </template>
       </el-table-column>
     </el-table>
-    <el-pagination
-                   style="margin-top: 10px;"
-                   @size-change="handleSizeChange"
-                   @current-change="handleCurrentChange"
-                   :page-sizes="pageOption.pageSizes"
-                   :page-size="pageOption.pageSize"
-                   layout="total, sizes, prev, pager, next, jumper"
-                   :total="pageOption.total">
+    <el-pagination style="margin-top: 10px;" @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                   :page-sizes="pageOption.pageSizes" :page-size="pageOption.pageSize"
+                   layout="total, sizes, prev, pager, next, jumper" :total="pageOption.total">
     </el-pagination>
 
     <el-dialog :title="title" :visible.sync="dialogFormVisible" :close-on-click-modal="false">
-      <el-form :model="form" label-width="80px">
+      <el-form :model="form" label-width="100px">
         <template v-for="(item,i) in fields">
           <el-form-item v-if="editId&&item.isEdit || (!editId&&item.formslot)" :key="i" :label="item.label">
-            <el-select v-if="item.dicData" v-model="form[item.prop]" placeholder="请选择">
-              <el-option v-for="item in item.dicData" :key="item.value" :label="item.label"
-                         :value="item.value">
+            <upload-file v-if="item.upload" :key="i" :upload-class="item.upload" :url.sync="form[item.prop]"></upload-file>
+            <el-select v-else-if="item.dicData" v-model="form[item.prop]" placeholder="请选择">
+              <el-option v-for="item in item.dicData" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
             </el-select>
             <el-input v-else v-model="form[item.prop]" autocomplete="off"></el-input>
@@ -63,11 +61,17 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Prop, PropSync } from "vue-property-decorator";
+import { Vue, Component, Prop } from "vue-property-decorator";
+import UploadFile from "./UploadFile.vue";
 @Component({
-  filters: {}
+  components: {
+    UploadFile
+  }
 })
 export default class CrudComponent extends Vue {
+  handleAvatarSuccess(res, file, c) {
+    global.console.log(res, file, c, "handleAvatarSuccess");
+  }
   // Property 'requestUrl' has no initializer and is not definitely assigned in the constructor.
   // 使用!:
   // 请求url
