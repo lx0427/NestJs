@@ -16,7 +16,7 @@ export default class Course extends Vue {
       label: "课程封面图",
       formslot: true,
       isEdit: true,
-      upload: "avatar-uploader"
+      upload: "image"
     }
   ];
 }

@@ -1,9 +1,12 @@
 <template>
-  <el-upload :class="uploadClass"
+  <el-upload class="avatar-uploader"
              :action="baseURL+'/uploads'"
              :on-success="handleAvatarSuccess"
              :show-file-list="false">
-    <img v-if="imgUrl" :src="imgUrl" class="avatar">
+    <template v-if="fileUrl">
+      <img v-if="uploadType==='image'" :src="fileUrl" class="avatar">
+      <video v-else-if="uploadType==='video'" :src="fileUrl" class="avatar"></video>
+    </template>
     <i v-else class="el-icon-plus avatar-uploader-icon"></i>
   </el-upload>
 </template>
@@ -12,14 +15,14 @@
 import { Vue, Component, PropSync, Prop } from "vue-property-decorator";
 @Component({})
 export default class UploadFile extends Vue {
-  // 传入上传图片的class
-  @Prop(String) uploadClass!: string;
+  // 上传文件类型：image,video
+  @Prop(String) uploadType!: string;
   // 传入url,同步更改数据
-  @PropSync("url", { type: String }) imgUrl!: string;
+  @PropSync("url", { type: String }) fileUrl!: string;
 
   handleAvatarSuccess(res, file) {
     global.console.log(res, file, "handleAvatarSuccess");
-    this.imgUrl = res.url;
+    this.fileUrl = res.url;
   }
 }
 </script>

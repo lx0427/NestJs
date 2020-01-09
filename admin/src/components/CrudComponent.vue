@@ -23,7 +23,8 @@
         </el-table-column>
         <el-table-column v-else :prop="item.prop" :label="item.label" :key="i">
           <template slot-scope="{row}">
-            <img :src="row[item.prop]" style="width:100px" alt="">
+            <img v-if="item.upload==='image'" :src="row[item.prop]" style="width:100px" alt="">
+            <video v-else-if="item.upload==='video'" height="60" :src="row[item.prop]"></video>
           </template>
         </el-table-column>
       </template>
@@ -43,7 +44,7 @@
       <el-form :model="form" label-width="100px">
         <template v-for="(item,i) in fields">
           <el-form-item v-if="editId&&item.isEdit || (!editId&&item.formslot)" :key="i" :label="item.label">
-            <upload-file v-if="item.upload" :key="i" :upload-class="item.upload" :url.sync="form[item.prop]"></upload-file>
+            <upload-file v-if="item.upload" :key="i" :upload-type="item.upload" :url.sync="form[item.prop]"></upload-file>
             <el-select v-else-if="item.dicData" v-model="form[item.prop]" placeholder="请选择">
               <el-option v-for="item in item.dicData" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
